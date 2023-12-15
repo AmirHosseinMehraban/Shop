@@ -17,3 +17,5 @@ class Register(CreateAPIView):
             return Response({"message": "user create successfully"}, status=status.HTTP_201_CREATED)
         return Response(srz_data.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+
+
