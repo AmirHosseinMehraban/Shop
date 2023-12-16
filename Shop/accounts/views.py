@@ -19,10 +19,15 @@ class Register(CreateAPIView):
             return Response({"message": "user create successfully"}, status=status.HTTP_201_CREATED)
         return Response(srz_data.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+
+
 class Logout(APIView):
     def post(self, request):
         request.user.auth_token.delete()
         return Response({"message": "user logout"}, status=status.HTTP_204_NO_CONTENT)
+
+
+
 
 
 
