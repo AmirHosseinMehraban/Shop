@@ -8,8 +8,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-    ]
-
+    ]  
+   
     operations = [
         migrations.CreateModel(
             name='Category',
@@ -33,6 +33,7 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
                 ('category', models.ManyToManyField(related_name='pcategory', to='home.category')),
-            ],
+            ],  
+            
         ),
     ]
