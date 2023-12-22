@@ -18,7 +18,7 @@ class Product(models.Model):
     image = models.ImageField(null=True, blank=True)
     description = models.TextField()
     price = models.FloatField()
-    available = models.BooleanField(default=True)
+    is_available = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
