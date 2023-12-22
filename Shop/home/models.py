@@ -5,7 +5,7 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=50)
     is_sub = models.BooleanField(default=False)
-    sub_category = models.ManyToManyField('Category', related_name="scategory")
+    sub_category = models.ManyToManyField('Category', related_name="scategory", blank=True)
 
     def __str__(self):
         return self.name
