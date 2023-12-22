@@ -16,9 +16,11 @@ class Product(models.Model):
     category = models.ManyToManyField(Category, related_name='pcategory')
     slug = models.SlugField(max_length=50)
     image = models.ImageField(null=True, blank=True)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     price = models.FloatField()
-    is_available = models.BooleanField(default=True)
+    modals = models.CharField(max_length=100)
+    isAvailable = models.BooleanField(default=True)
+    star = models.FloatField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
