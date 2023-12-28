@@ -19,15 +19,18 @@ class CartView(APIView):
         #should be change later
         cart, created = Order.objects.get_or_create(user=request.user)
         product = Product.objects.get(pk=product_id)
-        cart_item, created = OrderItem.objects.get_or_create(order=cart, product=product)
+        # cart_item, created = OrderItem.objects.get_or_create(order=cart, product=product)
         serializer = OrderItemSerializer(data=request.POST)
+        if serializer.is_valid():
+            cart_item, created = OrderItem.objects.get_or_create(order=cart, product=product, price=product.price,
+                                                                 quantity=serializer.data['quantity'])
+
         return Response(serializer.data)
 
-    def delete(self, request, product_id):
-        cart = Order.objects.get(user=request.user)
-        product = Product.objects.get(pk=product_id)
-        cart_item = OrderItem.objects.get(cart=cart, product=product)
-        cart_item.delete()
-        serializer = OrderSerializer(cart)
+    def delete(self, request, order_id):
+        cart = OrderItem.objects.filter(order__user=request.user)
+        order = OrderItem.objects.get(id=order_id)
+        order.delete()
+        serializer = OrderItemSerializer(instance=cart, many=True)
         return Response(serializer.data)
 
