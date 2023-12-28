@@ -1,24 +1,26 @@
+from django.contrib.admindocs.utils import docutils_is_available
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializer import ProductSerializer, CategorySerializer
 from .models import Product, Category
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.viewsets import ModelViewSet
 
+
+class ProductPagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
 
 class home(APIView):
+    pagination_class = ProductPagination
+
     def get(self, request):
-        product = Product.objects.filter(isAvailable=True)
-        category = Category.objects.all()
-        cat_slug = request.GET.get('cat_slug', False)
-        if cat_slug:
-            category = Category.objects.filter(slug=cat_slug)
-            product = Product.objects.filter(category__name=cat_slug)
+        products = Product.objects.filter(isAvailable=True)
 
-        cat_ser = CategorySerializer(instance=category, many=True)
-        product_ser = ProductSerializer(instance=product, many=True)
-        # need attention
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(products, request)
 
-        return Response(data=product_ser.data)
-
-# Create your views here.
+        serializer = ProductSerializer(result_page, many=True)
+        return Response(serializer.data)
