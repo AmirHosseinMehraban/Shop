@@ -17,6 +17,8 @@ class home(APIView):
     pagination_class = ProductPagination
 
     def get(self, request, category=None):
+        print("*"*99)
+        print(request.user)
         search_query = request.GET.get('search', '')
         if category:
             products = Product.objects.filter(isAvailable=True, name__icontains=search_query, category__name=category)
