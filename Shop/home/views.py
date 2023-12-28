@@ -30,5 +30,21 @@ class home(APIView):
         return Response(serializer.data)
 
 
+class ProductDetailView(APIView):
+    def get(self, request, name):
+        product = Product.objects.get(name=name)
+        product_srz = ProductSerializer(product)
+        return Response(data=product_srz.data, status=200)
+
+
+    def post(self, request, name):
+        product = Product.objects.get(name=name)
+        product_srz = ProductSerializer(product)
+        return Response(data=product_srz.data)
+
+
+
+
+
 
 
