@@ -10,4 +10,5 @@ app_name = 'home'
 # router.register(r'', views.home, basename='home')
 urlpatterns = [
     path('', views.home.as_view(), name='home'),
+    path('<str:category>/', views.home.as_view(), name='product_category')
 ]
