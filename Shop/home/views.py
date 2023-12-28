@@ -8,7 +8,7 @@ from .models import Product, Category
 
 class home(APIView):
     def get(self, request):
-        product = Product.objects.filter(is_available=True)
+        product = Product.objects.filter(isAvailable=True)
         category = Category.objects.all()
         cat_slug = request.GET.get('cat_slug', False)
         if cat_slug:
@@ -19,9 +19,6 @@ class home(APIView):
         product_ser = ProductSerializer(instance=product, many=True)
         # need attention
 
-        return Response(data={
-            "category": cat_ser.data,
-            "product": product_ser.data
-        })
+        return Response(data=product_ser.data)
 
 # Create your views here.
