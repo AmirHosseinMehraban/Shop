@@ -12,3 +12,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = "__all__"
+
+class OrderItemSelectSerializer(serializers.Serializer):
+    quantity = serializers.IntegerField()
