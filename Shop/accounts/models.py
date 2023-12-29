@@ -44,3 +44,9 @@ class Otpcode(models.Model):
     def __str__(self):
         return f'{self.phone_number} - {self.code}'
 
+class Profile(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    verificationCode = models.CharField(max_length=4)
+    isVerification = models.BooleanField(default=False)
+
+

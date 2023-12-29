@@ -1,9 +1,28 @@
 from rest_framework import serializers
-from .models import MyUser, Otpcode
+from .models import MyUser, Otpcode, Profile
 
+
+
+
+class OtpcodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Otpcode
+        fields = ['phone_number', 'code']
+
+    def create(self, validated_data):
+        otp = Otpcode(phone_number=validated_data['phone_number'], code=validated_data['code'])
+        otp.save()
+        return otp
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        models = Profile
+        fields = ['verificationCode', 'isVerification']
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(max_length=20)
+    # profile = ProfileSerializer()
 
     class Meta:
         model = MyUser
@@ -40,16 +59,4 @@ class UserRegisterSerializer(serializers.ModelSerializer):
                                           email=validated_data['email'], full_name=validated_data['full_name'],
                                           password=validated_data['password'])
         return user
-
-
-class OtpcodeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Otpcode
-        fields = ['phone_number', 'code']
-
-    def create(self, validated_data):
-        otp = Otpcode(phone_number=validated_data['phone_number'], code=validated_data['code'])
-        otp.save()
-        return otp
-
 

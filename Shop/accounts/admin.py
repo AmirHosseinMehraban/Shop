@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .forms import UserCreationForm, UserChangeForm
-from .models import MyUser, Otpcode
+from .models import MyUser, Otpcode, Profile
 from django.contrib.auth.models import Group
 
 
@@ -20,7 +20,7 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ["wide"],
-                "fields": ["phone_number", "email", "fullname", "password1", "password2"],
+                "fields": ["phone_number", "email", "full_name", "password1", "password2"],
             },
         ),
     ]
@@ -36,3 +36,4 @@ admin.site.register(MyUser, UserAdmin)
 
 admin.site.unregister(Group)
 admin.site.register(Otpcode, OtpcodeAdmin)
+admin.site.register(Profile)

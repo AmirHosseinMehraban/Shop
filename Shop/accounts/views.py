@@ -5,24 +5,43 @@ from rest_framework.generics import CreateAPIView
 from .serializers import UserRegisterSerializer
 from rest_framework.response import Response
 from rest_framework.authtoken.views import obtain_auth_token
+from .models import MyUser, Profile
+from rest_framework.permissions import AllowAny
 
 login = obtain_auth_token
 
 
-class Register(CreateAPIView):
-    def get(self, request):
-        print("*"*99)
-        request.session['hello']='foo'
-        return Response({"hello"})
+class Register(APIView):
+    # CreateAPIView
+    permission_classes = [AllowAny, ]
     def post(self, request):
-        srz_data = UserRegisterSerializer(data=request.data)
-        if srz_data.is_valid():
-            # srz_data.save()
-            request.session['verifycode'] = {'srz_data': srz_data, 'code': 1234}
-            return Response({"message": "user create successfully"}, status=status.HTTP_201_CREATED)
-        return Response(srz_data.errors, status=status.HTTP_406_NOT_ACCEPTABLE)
 
+        serializer = UserRegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            user = MyUser.objects.create_user(phone_number=serializer.data['phone_number'], email=serializer.data['email'],
+                          full_name=serializer.data['full_name'], password=serializer.data['password'])
+            user.is_active=False
+            user.save()
+            verification_code = '1234'
+            profile = Profile(user=user, verificationCode=verification_code)
+            profile.save()
+            return Response({"message": "send email please check it"})
+        return Response(serializer.errors)
 
+class VerifyView(APIView):
+    permission_classes = [AllowAny, ]
+    def post(self, request):
+        username = request.data.get('username', '')
+        verification_code = request.data.get('verificationCode', '')
+        print("#"*99)
+        print(username)
+        profile = Profile.objects.filter(user__phone_number=username, verificationCode=verification_code)
+        if profile.exists():
+            user = MyUser.objects.get(phone_number=username)
+            user.is_active = True
+            user.save()
+
+        return Response({"user successfully "}, status=status.HTTP_200_OK)
 
 class Logout(APIView):
     def post(self, request):
@@ -36,6 +55,10 @@ class Test(APIView):
         print(request.session['hello'])
         return Response({"hello"})
 
+
+class ForgotPasswordView(APIView):
+    def post(self, request):
+        ...
 
 
 
