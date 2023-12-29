@@ -29,7 +29,7 @@ class home(APIView):
         result_page = paginator.paginate_queryset(products, request)
 
         serializer = ProductSerializer(result_page, many=True)
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data)
 
 
 class ProductDetailView(APIView):
