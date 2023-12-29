@@ -11,5 +11,5 @@ app_name = 'home'
 urlpatterns = [
     path('', views.home.as_view(), name='Home'),
     path('<str:category>/', views.home.as_view(), name='Product_Category'),
-    path('product/<str:name>', views.ProductDetailView.as_view(), name="Product_Detail")
+    path('product/<str:name>', views.ProductDetailView.as_view(), name="Product_Detail"),
 ]

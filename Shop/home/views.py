@@ -7,10 +7,11 @@ from .serializer import ProductSerializer, CategorySerializer
 from .models import Product, Category
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet
+from django.core.mail import send_mail
 
 
 class ProductPagination(PageNumberPagination):
-    page_size = 20
+    page_size = 10
     page_size_query_param = 'page_size'
 
 class home(APIView):
@@ -43,6 +44,7 @@ class ProductDetailView(APIView):
         product = Product.objects.get(name=name)
         product_srz = ProductSerializer(product)
         return Response(data=product_srz.data)
+
 
 
 
