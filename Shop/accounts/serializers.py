@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import MyUser, Otpcode, Profile
+from django.utils import timezone
+
 
 
 
@@ -28,6 +30,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         model = MyUser
         fields = ['phone_number', 'email', 'full_name', 'password', 'password2']
 
+
     def validate_password(self, data):
         password = data
         if len(password) < 8:
@@ -39,6 +42,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         if MyUser.objects.filter(email=email).exists():
             raise serializers.ValidationError("this email have")
         return data
+
 
     def validate_phone_number(self, data):
         phone_number = data
@@ -55,8 +59,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        user = MyUser.objects.create_user(phone_number=validated_data['phone_number'],
-                                          email=validated_data['email'], full_name=validated_data['full_name'],
+        user = MyUser.objects.create_user(phone_number=validated_data['phone_number'], email=validated_data['email'],
+                                          full_name=validated_data['full_name'],
                                           password=validated_data['password'])
         return user
 

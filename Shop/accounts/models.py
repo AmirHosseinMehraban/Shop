@@ -48,5 +48,6 @@ class Profile(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     verificationCode = models.CharField(max_length=4)
     isVerification = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
 
 
