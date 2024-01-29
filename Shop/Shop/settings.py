@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +54,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'Shop.urls'
@@ -60,7 +63,7 @@ ROOT_URLCONF = 'Shop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -122,6 +125,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR/'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -142,6 +147,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'ahm.mehrabanamirh@gmail.com'  # Your email address
 EMAIL_HOST_PASSWORD = 'jticpuuggiyhhorf '
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5173",  # React development server
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173", # React development server
+    "http://127.0.0.1",
+    "http://0.0.0.0",
+]
+CORS_ALLOW_CREDENTIALS = True

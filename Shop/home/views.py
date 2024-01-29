@@ -8,6 +8,9 @@ from .models import Product, Category
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet
 from django.core.mail import send_mail
+from rest_framework import generics
+from django.views import View
+from django.http import HttpResponse
 
 
 class ProductPagination(PageNumberPagination):
@@ -44,6 +47,14 @@ class ProductDetailView(APIView):
         product = Product.objects.get(name=name)
         product_srz = ProductSerializer(product)
         return Response(data=product_srz.data)
+
+class test(View):
+    def get(self, request):
+        with open('static/index.html' ,'r') as file:
+            content = file.read()
+
+        return HttpResponse(content, content_type='text/html')
+
 
 
 
