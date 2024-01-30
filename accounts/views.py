@@ -2,10 +2,10 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
-from .serializers import UserRegisterSerializer
+from .serializers import UserRegisterSerializer, ForgotEmailSerializer, VerifySerializer, ForgotLoginSerializer
 from rest_framework.response import Response
 from rest_framework.authtoken.views import obtain_auth_token
-from .models import MyUser, Profile
+from .models import MyUser, Profile, Forgot
 from rest_framework.permissions import AllowAny
 from .utils import mail
 import random
@@ -38,24 +38,27 @@ class VerifyView(APIView):
     permission_classes = [AllowAny, ]
 
     def post(self, request):
-        # username = request.data.get('username', '')
-        verification_code = request.data.get('verificationCode', '')
-        username = request.data['phone_number']
+        serializer = VerifySerializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data['phone_number']
 
-        profile = Profile.objects.filter(user__phone_number=username, verificationCode=verification_code)
-        if profile.exists():
-            if (timezone.now()- profile[0].created).total_seconds() > 120:
-                profile.delete()
+            verification_code = serializer.validated_data['verificationCode']
+
+            profile = Profile.objects.filter(user__phone_number=username, verificationCode=verification_code)
+            if profile.exists():
+                if (timezone.now()- profile[0].created).total_seconds() > 120:
+                    profile.delete()
+                    user = MyUser.objects.get(phone_number=username)
+                    user.delete()
+                    return Response({"sign up again ... "})
                 user = MyUser.objects.get(phone_number=username)
-                user.delete()
-                return Response({"sign up again ... "})
-            user = MyUser.objects.get(phone_number=username)
-            user.is_active = True
-            user.save()
-            profile.delete()
-            return Response({"user successfully added ...."})
+                user.is_active = True
+                user.save()
+                profile.delete()
 
-        return Response({"there is something error "})
+                return Response({"user successfully added ...."})
+
+        return Response(serializer.errors)
 
 
 class Logout(APIView):
@@ -73,6 +76,37 @@ class Test(APIView):
 
 class ForgotPasswordView(APIView):
     def post(self, request):
-        email = request.date['email']
-        user = MyUser.objects.filter(email=email)
-        return Response({"message": "user doesn't exists ... "})
+        serializer = ForgotEmailSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            user = MyUser.objects.get(email=email)
+            if user.is_active:
+                code = str(random.randint(1000,9999))
+                mail('1111', user.email, user.full_name)
+                user_forgot=Forgot(user=user, code=code)
+                user_forgot.save()
+                return  Response({"message": "send you email please verify it"})
+            return Response({"message": "this user is not verify code "})
+        return Response(serializer.errors)
+
+class ForgotLogin(APIView):
+    def post(self, request):
+        serializer = ForgotLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            code = serializer.validated_data['code']
+            password = serializer.validated_data['password']
+            user = MyUser.objects.get(email=email)
+            forgot_user = Forgot.objects.filter(user=user, code=code)
+            if forgot_user.exists():
+                forgot_user.delete()
+                user.set_password(password)
+                user.save()
+                return Response({"message":"change password successfuly ... "})
+            return Response({"message": "there is something ...."})
+        return Response(serializer.errors)
+
+
+
+
+

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MyUser, Otpcode, Profile
+from .models import MyUser, Otpcode, Profile, Forgot
 from django.utils import timezone
 
 
@@ -63,4 +63,48 @@ class UserRegisterSerializer(serializers.ModelSerializer):
                                           full_name=validated_data['full_name'],
                                           password=validated_data['password'])
         return user
+
+class ForgotEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    def validate_email(self, value):
+        if MyUser.objects.filter(email=value).exists() and MyUser.objects.get(email=value).is_active:
+            return value
+        raise  serializers.ValidationError("there isent user with this email")
+
+class VerifySerializer(serializers.Serializer):
+    phone_number = serializers.CharField(max_length=12)
+    verificationCode = serializers.CharField(max_length=4)
+
+    # def validate_phone_number(self, value):
+    #     if Profile.objects.filter(user=value).exists():
+    #         print("@*99")
+    #         return value
+    #     raise serializers.ValidationError('phone number ... ')
+
+    def validate_verificationCode(self, value):
+        if len(value) != 4:
+            raise serializers.ValidationError('verification code shoul be 4 character ... ')
+        return value
+
+class ForgotLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=4, min_length=4)
+    password = serializers.CharField(max_length=100)
+    password2 = serializers.CharField(max_length=100)
+
+    def validate(self, data):
+        email = data['email']
+        code = data['code']
+        password = data['password']
+        password2= data['password2']
+
+        if MyUser.objects.filter(email=email).exists() == False:
+            raise serializers.ValidationError('email ...')
+        if password !=password2:
+            raise serializers.ValidationError('password should be match ... ')
+        return data
+
+
+
+
 
